@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import type { ExtensionConfig } from '../../types/config.types'
 import { StorageService } from '../../services/StorageService'
-import { DEFAULT_API_BASE_URL } from '../../constants/api.constants'
 import { TimePickerInput } from './TimePickerInput'
 
 const DEFAULT_CONFIG: ExtensionConfig = {
-  apiBaseUrl: DEFAULT_API_BASE_URL,
+  apiBaseUrl: 'https://ponto-api-dev.storer.com.br',
   lembretes: ['08:00', '12:00', '13:30', '18:00'],
   geolocalizacaoHabilitada: false,
   notificacoesHabilitadas: true,

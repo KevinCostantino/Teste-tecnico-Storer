@@ -6,7 +6,11 @@
   "permissions": ["storage", "notifications", "alarms", "identity"],
   "host_permissions": [
     "https://ponto-api.storer.com.br/*",
-    "https://*.zitadel.cloud/*"
+    "https://ponto-api-dev.storer.com.br/*",
+    "https://auth.storer.com.br/*",
+    "https://auth-dev.storer.com.br/*",
+    "https://*.zitadel.cloud/*",
+    "http://localhost:3001/*"
   ],
   "background": {
     "service_worker": "background/index.js",

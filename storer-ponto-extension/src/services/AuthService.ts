@@ -78,6 +78,20 @@ export class AuthService {
   }
 
   static async startLoginFlow(): Promise<TokenSet> {
+    if (import.meta.env.VITE_MOCK_AUTH === 'true') {
+      const tokenSet: TokenSet = {
+        accessToken: 'mock-access-token',
+        refreshToken: 'mock-refresh-token',
+        idToken: 'mock-id-token',
+        expiresAt: Date.now() + 8 * 60 * 60 * 1000,
+        userId: 'mock-user-001',
+        userEmail: 'colaborador@storer.com.br',
+        userDisplayName: 'Colaborador Demo',
+      }
+      await StorageService.saveTokenSet(tokenSet)
+      return tokenSet
+    }
+
     if (!ZITADEL_CLIENT_ID) {
       throw new Error('OIDC nao configurado. Defina VITE_ZITADEL_DOMAIN e VITE_ZITADEL_CLIENT_ID.')
     }
@@ -177,6 +191,12 @@ export class AuthService {
 
     if (!refreshToken) {
       throw new Error('Refresh token indisponivel para renovar sessao.')
+    }
+
+    if (refreshToken === 'mock-refresh-token') {
+      const refreshed: TokenSet = { ...current!, expiresAt: Date.now() + 8 * 60 * 60 * 1000 }
+      await StorageService.saveTokenSet(refreshed)
+      return refreshed
     }
 
     const response = await fetch(`${getZitadelBaseUrl()}${OIDC_TOKEN_PATH}`, {

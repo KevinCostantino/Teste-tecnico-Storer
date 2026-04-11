@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "mock-api": "node mock-api/server.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Storer Ponto",
+  "version": "1.0.0",
+  "description": "Registro de ponto eletronico - Storer Sistemas",
+  "permissions": ["storage", "notifications", "alarms", "identity"],
+  "host_permissions": [
+    "https://ponto-api.storer.com.br/*",
+    "https://*.zitadel.cloud/*"
+  ],
+  "background": {
+    "service_worker": "background/index.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "src/popup/index.html"
+  },
+  "options_page": "src/options/index.html",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

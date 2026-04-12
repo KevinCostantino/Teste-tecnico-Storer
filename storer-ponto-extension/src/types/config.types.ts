@@ -3,4 +3,5 @@ export interface ExtensionConfig {
   lembretes: string[]
   geolocalizacaoHabilitada: boolean
   notificacoesHabilitadas: boolean
+  incluirFimDeSemanaNosLembretes: boolean
 }

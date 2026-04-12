@@ -25,6 +25,7 @@ describe('OptionsPage', () => {
       lembretes: ['08:00', '12:00'],
       geolocalizacaoHabilitada: false,
       notificacoesHabilitadas: true,
+      incluirFimDeSemanaNosLembretes: false,
     })
   })
 

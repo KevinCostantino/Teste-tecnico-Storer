@@ -42,6 +42,7 @@ describe('MainScreen', () => {
       lembretes: ['08:00'],
       geolocalizacaoHabilitada: false,
       notificacoesHabilitadas: true,
+      incluirFimDeSemanaNosLembretes: false,
     })
   })
 

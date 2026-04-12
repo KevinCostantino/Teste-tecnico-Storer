@@ -14,6 +14,7 @@ const DEFAULT_CONFIG: ExtensionConfig = {
   lembretes: ['08:00', '12:00', '13:30', '18:00'],
   geolocalizacaoHabilitada: false,
   notificacoesHabilitadas: true,
+  incluirFimDeSemanaNosLembretes: false,
 }
 
 export class StorageService {
@@ -46,7 +47,16 @@ export class StorageService {
 
   static async getConfig(): Promise<ExtensionConfig> {
     const result = await chrome.storage.sync.get(STORAGE_KEYS.config)
-    return (result[STORAGE_KEYS.config] as ExtensionConfig | undefined) ?? DEFAULT_CONFIG
+    const stored = result[STORAGE_KEYS.config] as Partial<ExtensionConfig> | undefined
+    if (!stored) {
+      return DEFAULT_CONFIG
+    }
+
+    return {
+      ...DEFAULT_CONFIG,
+      ...stored,
+      lembretes: stored.lembretes?.length ? stored.lembretes : DEFAULT_CONFIG.lembretes,
+    }
   }
 
   static async saveConfig(config: ExtensionConfig): Promise<void> {

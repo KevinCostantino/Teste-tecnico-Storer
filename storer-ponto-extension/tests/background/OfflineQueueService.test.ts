@@ -79,6 +79,7 @@ describe('OfflineQueueService', () => {
       lembretes: ['08:00'],
       geolocalizacaoHabilitada: false,
       notificacoesHabilitadas: true,
+      incluirFimDeSemanaNosLembretes: false,
     })
   })
 

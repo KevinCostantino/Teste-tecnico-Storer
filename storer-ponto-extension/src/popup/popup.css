@@ -1,11 +1,12 @@
 :root {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #12263a;
-  background: #f4f7fb;
+  color: #f4f8ff;
+  background: radial-gradient(circle at 20% 0%, #0f1a2e, #06080c 60%);
 }
 
 body {
   margin: 0;
+  background: #07090d;
 }
 
 .popup-container {
@@ -17,8 +18,9 @@ body {
 }
 
 .card {
-  background: #ffffff;
-  border: 1px solid #dbe7f3;
+  background: #0f1218;
+  border: 1px solid #1d2430;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   border-radius: 12px;
   padding: 14px;
   margin-bottom: 12px;
@@ -29,7 +31,7 @@ body {
   border: 0;
   border-radius: 10px;
   padding: 12px;
-  background: #0f5cad;
+  background: linear-gradient(135deg, #0a58ca, #1f7cff);
   color: #ffffff;
   font-weight: 700;
   cursor: pointer;
@@ -41,14 +43,32 @@ body {
 }
 
 .button-secondary {
-  border: 1px solid #c0d3e8;
+  border: 1px solid #2f3f57;
   border-radius: 8px;
   padding: 8px 10px;
-  background: #f4f8fc;
-  color: #1f4770;
+  background: #141922;
+  color: #9fc2ff;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.button-logout {
+  border: 1px solid #2f3f57;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #141922;
+  color: #cfe1ff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.button-logout:hover {
+  background: #0f2a53;
+  border-color: #1f6ad9;
+  color: #ffffff;
 }
 
 .section-header {
@@ -63,9 +83,9 @@ body {
 }
 
 .error-card {
-  border: 1px solid #f0c7c3;
-  background: #fff4f3;
-  color: #8d2a22;
+  border: 1px solid #5a2b35;
+  background: #2a1318;
+  color: #ff9aa8;
 }
 
 .error-card p {
@@ -73,9 +93,9 @@ body {
 }
 
 .queue-card {
-  border: 1px solid #f3dda8;
-  background: #fff9ea;
-  color: #7a5a12;
+  border: 1px solid #2f3f57;
+  background: #121826;
+  color: #c4d7ff;
 }
 
 .queue-card p {
@@ -83,12 +103,12 @@ body {
 }
 .queue-card__sync-time {
   font-size: 11px;
-  color: #9a7b30;
+  color: #8fb0ee;
   margin-bottom: 8px;
 }
 .loading {
   font-size: 14px;
-  color: #38506b;
+  color: #9fb8de;
 }
 
 .list {
@@ -104,7 +124,8 @@ body {
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  border: 1px solid #e4edf6;
+  border: 1px solid #242f40;
+  background: #0b0f16;
   border-radius: 8px;
   padding: 8px 10px;
 }
@@ -114,8 +135,8 @@ body {
   border-radius: 8px;
   padding: 10px;
   font-size: 13px;
-  background: #e6f6ed;
-  color: #135f2b;
+  background: #0f2a1f;
+  color: #74e6a0;
 }
 
 /* Skeleton loading */
@@ -125,7 +146,7 @@ body {
 }
 
 .skeleton {
-  background: #dbe7f3;
+  background: #243246;
   border-radius: 6px;
   animation: skeleton-pulse 1.4s ease-in-out infinite;
 }
@@ -140,54 +161,3 @@ body {
   width: 70%;
 }
 
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #d0dff0;
-    background: #101d2c;
-  }
-
-  .card {
-    background: #172336;
-    border-color: #253d56;
-  }
-
-  .button-primary {
-    background: #1a74d4;
-  }
-
-  .button-secondary {
-    background: #1d3350;
-    border-color: #2e4f74;
-    color: #8fbde8;
-  }
-
-  .list-item {
-    border-color: #253d56;
-  }
-
-  .error-card {
-    background: #2b1516;
-    border-color: #7a2d28;
-    color: #f4a09a;
-  }
-
-  .queue-card {
-    background: #2a2010;
-    border-color: #7a5a12;
-    color: #f3d07a;
-  }
-
-  .queue-card__sync-time {
-    color: #c9a84c;
-  }
-
-  .toast {
-    background: #14321e;
-    color: #6edfa0;
-  }
-
-  .skeleton {
-    background: #253d56;
-  }
-}

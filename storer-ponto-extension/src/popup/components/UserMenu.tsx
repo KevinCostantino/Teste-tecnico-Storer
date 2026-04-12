@@ -7,7 +7,9 @@ export const UserMenu = ({ userName, onLogout }: UserMenuProps): JSX.Element => 
   return (
     <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <strong>{userName}</strong>
-      <button onClick={() => void onLogout()}>Sair</button>
+      <button className="button-logout" onClick={() => void onLogout()}>
+        Sair
+      </button>
     </div>
   )
 }

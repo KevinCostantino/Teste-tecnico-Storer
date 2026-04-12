@@ -1,73 +1,116 @@
-# React + TypeScript + Vite
+# Storer Ponto Extension
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Extensao Chrome/Edge (Manifest V3) para registro de ponto da Storer Sistemas.
 
-Currently, two official plugins are available:
+Stack: TypeScript, React 18, Vite, Vitest.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Requisitos
 
-## React Compiler
+- Node.js 20+
+- NPM 10+
+- Google Chrome (ou Edge Chromium)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Setup
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Configuracao de ambiente
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Arquivo local: `.env.local`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Exemplo para desenvolvimento com API mock local:
+
+```bash
+VITE_ZITADEL_DOMAIN=auth-dev.storer.com.br
+VITE_ZITADEL_CLIENT_ID=storer-ponto-extension-dev@StorerProject
+VITE_API_BASE_URL=http://localhost:3001
+VITE_ENV=development
+VITE_MOCK_AUTH=true
 ```
+
+Campos:
+
+- `VITE_ZITADEL_DOMAIN`: dominio do IdP Zitadel
+- `VITE_ZITADEL_CLIENT_ID`: client id da aplicacao no Zitadel
+- `VITE_API_BASE_URL`: base URL da API de ponto
+- `VITE_MOCK_AUTH`: `true` para login mock, `false` para login real via OIDC
+
+## Modos de execucao
+
+### 1) Modo demo (sem dependencia de Zitadel)
+
+Ideal para validacao funcional do fluxo de ponto.
+
+1. Garanta `VITE_MOCK_AUTH=true`.
+2. Suba a API mock:
+
+```bash
+npm run mock-api
+```
+
+3. Em outro terminal, gere a build:
+
+```bash
+npm run build
+```
+
+4. Carregue a extensao em `chrome://extensions`:
+1. Ative Developer mode.
+2. Clique em Load unpacked.
+3. Selecione a pasta `dist/`.
+
+### 2) Modo real (login com Zitadel)
+
+1. Configure no `.env.local`:
+   - `VITE_MOCK_AUTH=false`
+   - `VITE_ZITADEL_DOMAIN=<tenant.zitadel.cloud ou dominio valido>`
+   - `VITE_ZITADEL_CLIENT_ID=<client_id_do_app>`
+   
+2. No app do Zitadel, cadastre a Redirect URI da extensao:
+
+```text
+https://<EXTENSION_ID>.chromiumapp.org/callback
+```
+
+3. Rode `npm run build` e recarregue a extensao no Chrome.
+
+## Scripts
+
+- `npm run dev`: servidor de desenvolvimento Vite (UI web)
+- `npm run build`: build de producao da extensao
+- `npm run preview`: preview do build web
+- `npm run lint`: lint
+- `npm run lint:fix`: lint com autofix
+- `npm run typecheck`: checagem de tipos TS
+- `npm run test`: testes unitarios
+- `npm run test:watch`: testes em watch mode
+- `npm run test:coverage`: cobertura de testes
+- `npm run mock-api`: sobe API mock local (`http://localhost:3001`)
+
+## Estrutura principal
+
+```text
+src/
+  popup/        UI principal da extensao
+  options/      pagina de configuracoes
+  background/   service worker (refresh token, reminders, fila offline)
+  services/     auth, storage, http client, ponto service
+  types/        contratos TypeScript
+  constants/    constantes de API e OIDC
+tests/          testes com Vitest
+mock-api/       servidor mock local
+```
+
+## Troubleshooting
+
+- Erro `OIDC nao configurado`: confira `VITE_ZITADEL_DOMAIN` e `VITE_ZITADEL_CLIENT_ID`.
+- Erro `Authorization page could not be loaded`: validar dominio do Zitadel, DNS e Redirect URI.
+- Cloudflare `Error 1000`: problema de DNS do dominio custom; use tenant `*.zitadel.cloud` ou corrija DNS.
+
+## Seguranca
+
+- Access token armazenado em `chrome.storage.session`.
+- Refresh token armazenado em `chrome.storage.local` com criptografia AES-GCM.
+- Nunca versionar segredos reais em arquivos `.env` commitados.

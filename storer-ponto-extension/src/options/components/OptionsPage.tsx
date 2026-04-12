@@ -8,6 +8,7 @@ const DEFAULT_CONFIG: ExtensionConfig = {
   lembretes: ['08:00', '12:00', '13:30', '18:00'],
   geolocalizacaoHabilitada: false,
   notificacoesHabilitadas: true,
+  incluirFimDeSemanaNosLembretes: false,
 }
 
 const emptyConfig: ExtensionConfig = {
@@ -15,6 +16,7 @@ const emptyConfig: ExtensionConfig = {
   lembretes: ['08:00'],
   geolocalizacaoHabilitada: false,
   notificacoesHabilitadas: true,
+  incluirFimDeSemanaNosLembretes: false,
 }
 
 const isValidApiBaseUrl = (value: string): boolean => {
@@ -30,9 +32,19 @@ export const OptionsPage = (): JSX.Element => {
   const [config, setConfig] = useState<ExtensionConfig>(emptyConfig)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [testingNotification, setTestingNotification] = useState(false)
+  const [currentTime, setCurrentTime] = useState(new Date())
 
   useEffect(() => {
     void StorageService.getConfig().then((result) => setConfig(result))
+  }, [])
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setCurrentTime(new Date())
+    }, 30_000)
+
+    return () => window.clearInterval(intervalId)
   }, [])
 
   const save = async (): Promise<void> => {
@@ -55,6 +67,13 @@ export const OptionsPage = (): JSX.Element => {
 
     await StorageService.saveConfig(normalized)
     setConfig(normalized)
+
+    try {
+      await chrome.runtime.sendMessage({ type: 'REMINDER_RESCHEDULE' })
+    } catch {
+      // O listener de storage.onChanged no background ainda cobre este fluxo.
+    }
+
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -76,21 +95,64 @@ export const OptionsPage = (): JSX.Element => {
     setConfig({ ...config, lembretes: clone })
   }
 
+  const testNotification = async (): Promise<void> => {
+    setError(null)
+    setTestingNotification(true)
+
+    try {
+      const response = await chrome.runtime.sendMessage({ type: 'REMINDER_TEST' })
+      if (!response?.ok) {
+        throw new Error(response?.error ?? 'Falha ao enviar notificacao de teste.')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Falha ao enviar notificacao de teste.')
+    } finally {
+      setTestingNotification(false)
+    }
+  }
+
   return (
-    <main style={{ maxWidth: 720, margin: '24px auto', fontFamily: 'Segoe UI, sans-serif' }}>
-      <h1>Configuracoes da Extensao</h1>
+    <main
+      style={{
+        maxWidth: 720,
+        margin: '24px auto',
+        fontFamily: 'Segoe UI, sans-serif',
+        background: '#0b0b0d',
+        color: '#f7f9fc',
+        border: '1px solid #1d2129',
+        borderRadius: 14,
+        padding: 18,
+      }}
+    >
+      <h1 style={{ marginTop: 0, marginBottom: 6 }}>Configuracoes da Extensao</h1>
+      <p style={{ marginTop: 4, marginBottom: 16, color: '#75a8ff' }}>
+        Horario atual: {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+      </p>
 
       <label htmlFor="apiBaseUrl">URL da API</label>
       <input
         id="apiBaseUrl"
         value={config.apiBaseUrl}
         onChange={(event) => setConfig({ ...config, apiBaseUrl: event.target.value })}
-        style={{ width: '100%', marginBottom: 16 }}
+        style={{
+          width: '100%',
+          marginBottom: 16,
+          marginTop: 6,
+          background: '#12151b',
+          color: '#f7f9fc',
+          border: '1px solid #2b3443',
+          borderRadius: 8,
+          padding: '10px 12px',
+          boxSizing: 'border-box',
+        }}
       />
 
       <h2>Lembretes</h2>
       {config.lembretes.map((time, index) => (
-        <div key={`${time}-${index}`} style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+        <div
+          key={`${time}-${index}`}
+          style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}
+        >
           <TimePickerInput
             value={time}
             onChange={(value) => {
@@ -103,13 +165,33 @@ export const OptionsPage = (): JSX.Element => {
             disabled={config.lembretes.length <= 1}
             onClick={() => removeReminder(index)}
             type="button"
+            style={{
+              borderRadius: 8,
+              border: '1px solid #2b3443',
+              background: '#12151b',
+              color: '#f7f9fc',
+              padding: '8px 10px',
+              cursor: 'pointer',
+            }}
           >
             Remover
           </button>
         </div>
       ))}
 
-      <button disabled={config.lembretes.length >= 4} onClick={addReminder} type="button">
+      <button
+        disabled={config.lembretes.length >= 4}
+        onClick={addReminder}
+        type="button"
+        style={{
+          borderRadius: 8,
+          border: '1px solid #2b3443',
+          background: '#12151b',
+          color: '#f7f9fc',
+          padding: '8px 12px',
+          cursor: 'pointer',
+        }}
+      >
         Adicionar lembrete
       </button>
 
@@ -139,8 +221,49 @@ export const OptionsPage = (): JSX.Element => {
         </label>
       </div>
 
+      <div style={{ marginTop: 12 }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={config.incluirFimDeSemanaNosLembretes}
+            onChange={(event) =>
+              setConfig({ ...config, incluirFimDeSemanaNosLembretes: event.target.checked })
+            }
+          />
+          Incluir lembretes no fim de semana
+        </label>
+      </div>
+
       <div style={{ marginTop: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
-        <button onClick={() => void save()}>Salvar configuracoes</button>
+        <button
+          onClick={() => void save()}
+          style={{
+            borderRadius: 8,
+            border: '1px solid #1b5fc6',
+            background: '#0c55c7',
+            color: '#ffffff',
+            padding: '10px 14px',
+            cursor: 'pointer',
+            fontWeight: 700,
+          }}
+        >
+          Salvar configuracoes
+        </button>
+        <button
+          type="button"
+          onClick={() => void testNotification()}
+          disabled={testingNotification}
+          style={{
+            borderRadius: 8,
+            border: '1px solid #2b3443',
+            background: '#12151b',
+            color: '#f7f9fc',
+            padding: '10px 14px',
+            cursor: 'pointer',
+          }}
+        >
+          {testingNotification ? 'Enviando teste...' : 'Testar notificacao agora'}
+        </button>
         <button
           type="button"
           onClick={() => {
@@ -150,16 +273,23 @@ export const OptionsPage = (): JSX.Element => {
               setError(null)
             }
           }}
-          style={{ background: 'transparent', border: '1px solid #c0d3e8', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', color: '#38506b' }}
+          style={{
+            background: 'transparent',
+            border: '1px solid #2b3443',
+            borderRadius: 8,
+            padding: '10px 14px',
+            cursor: 'pointer',
+            color: '#75a8ff',
+          }}
         >
           Restaurar padroes
         </button>
       </div>
 
       {saved ? (
-        <p style={{ color: '#16653c', marginTop: 8 }}>✓ Configuracoes salvas com sucesso.</p>
+        <p style={{ color: '#72f2a4', marginTop: 8 }}>✓ Configuracoes salvas com sucesso.</p>
       ) : null}
-      {error ? <p style={{ color: '#8d2a22' }}>{error}</p> : null}
+      {error ? <p style={{ color: '#ff8c8c' }}>{error}</p> : null}
     </main>
   )
 }

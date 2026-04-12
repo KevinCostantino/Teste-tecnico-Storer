@@ -71,6 +71,34 @@ body {
   color: #ffffff;
 }
 
+.button-options {
+  border: 1px solid #2f3f57;
+  border-radius: 8px;
+  padding: 8px 14px;
+  background: #141922;
+  color: #9fc2ff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.button-options:hover {
+  background: #1a2332;
+  border-color: #0c55c7;
+  color: #75a8ff;
+}
+
+.actions-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.actions-container .button-primary {
+  flex: 1;
+}
+
 .section-header {
   display: flex;
   justify-content: space-between;

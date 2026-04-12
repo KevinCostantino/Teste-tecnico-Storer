@@ -132,6 +132,12 @@ export const MainScreen = (): JSX.Element => {
     window.location.reload()
   }
 
+  const handleOpenOptions = (): void => {
+    if (typeof chrome !== 'undefined' && chrome.runtime?.openOptionsPage) {
+      chrome.runtime.openOptionsPage()
+    }
+  }
+
   const handleForceSync = async (): Promise<void> => {
     if (typeof chrome === 'undefined' || !chrome.runtime?.sendMessage) {
       return
@@ -192,9 +198,19 @@ export const MainScreen = (): JSX.Element => {
   return (
     <>
       <UserMenu userName={userName} onLogout={handleLogout} />
-      <section className="card">
-        <BaterPontoButton loading={loading} onClick={handleBaterPonto} />
-      </section>
+      <div className="actions-container">
+        <section className="card" style={{ flex: 1, marginBottom: 0 }}>
+          <BaterPontoButton loading={loading} onClick={handleBaterPonto} />
+        </section>
+        <button
+          className="button-options"
+          onClick={handleOpenOptions}
+          style={{ alignSelf: 'center' }}
+          title="Abrir configurações"
+        >
+          ⚙️ Opções
+        </button>
+      </div>
       {offlineQueueCount > 0 || lastSyncAt ? (
         <section className="card queue-card">
           {offlineQueueCount > 0 ? (

@@ -44,19 +44,24 @@ Campos:
 Ideal para validacao funcional do fluxo de ponto.
 
 1. Garanta `VITE_MOCK_AUTH=true`.
-2. Suba a API mock:
+2. 
+```bash
+cd storer-ponto-extension/
+```
+3. Suba a API mock:
 
 ```bash
 npm run mock-api
 ```
 
-3. Em outro terminal, gere a build:
-
+4. Em outro terminal, gere a build: 
 ```bash
+cd storer-ponto-extension/
 npm run build
 ```
 
-4. Carregue a extensao em `chrome://extensions`:
+5. Carregue a extensao em `chrome://extensions`:
+
 1. Ative Developer mode.
 2. Clique em Load unpacked.
 3. Selecione a pasta `dist/`.
@@ -74,7 +79,12 @@ npm run build
 https://<EXTENSION_ID>.chromiumapp.org/callback
 ```
 
-3. Rode `npm run build` e recarregue a extensao no Chrome.
+3. 
+```bash
+cd storer-ponto-extension/
+```
+
+4. Rode `npm run build` e recarregue a extensao no Chrome.
 
 ## Scripts
 

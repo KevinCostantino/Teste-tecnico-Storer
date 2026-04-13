@@ -28,6 +28,7 @@ VITE_ZITADEL_CLIENT_ID=storer-ponto-extension-dev@StorerProject
 VITE_API_BASE_URL=http://localhost:3001
 VITE_ENV=development
 VITE_MOCK_AUTH=true
+VITE_ALLOW_WEEKEND_REMINDERS=true
 ```
 
 Campos:
@@ -36,6 +37,7 @@ Campos:
 - `VITE_ZITADEL_CLIENT_ID`: client id da aplicacao no Zitadel
 - `VITE_API_BASE_URL`: base URL da API de ponto
 - `VITE_MOCK_AUTH`: `true` para login mock, `false` para login real via OIDC
+- `VITE_ALLOW_WEEKEND_REMINDERS`: `true` para notificar em fins de semana
 
 ## Modos de execucao
 

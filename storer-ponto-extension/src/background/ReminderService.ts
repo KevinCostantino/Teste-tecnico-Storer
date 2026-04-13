@@ -222,7 +222,7 @@ export class ReminderService {
     }
 
     try {
-      await chrome.tabs.create({ url: chrome.runtime.getURL('src/popup/index.html') })
+      await chrome.tabs.create({ url: chrome.runtime.getURL('popup/index.html') })
     } catch {
       // No-op: clicking the extension icon is still available to the user.
     }

@@ -23,6 +23,10 @@ export class OfflineQueueService {
       }
     })
 
+    chrome.runtime.onConnect.addListener(() => {
+      void this.processQueue()
+    })
+
     chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
       const msg = (message as { payload?: RegistrarBatidaRequest; type?: string } | undefined)
 
